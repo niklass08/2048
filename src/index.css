@@ -2,7 +2,7 @@
     display: table;
 }
 
-.cell {
+.cell-null {
     background: rgb(146, 145, 145);
     border: 5px solid rgb(0, 0, 0);
     float: left;
@@ -16,3 +16,158 @@
     text-align: center;
     width: 80px;
   }
+
+.cell-2 {
+    background: #667D8E;
+    border: 5px solid rgb(0, 0, 0);
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 80px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    width: 80px;
+}
+.cell-4 {
+    background: #4A538E;
+    border: 5px solid rgb(0, 0, 0);
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 80px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    width: 80px;
+}
+.cell-8 {
+    background: #8E3F56;
+    border: 5px solid rgb(0, 0, 0);
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 80px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    width: 80px;
+}
+.cell-16 {
+    background: rgb(146, 98, 51);
+    border: 5px solid rgb(0, 0, 0);
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 80px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    width: 80px;
+}
+.cell-32 {
+    background: rgb(144, 146, 42);
+    border: 5px solid rgb(0, 0, 0);
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 80px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    width: 80px;
+}
+.cell-64 {
+    background: rgb(62, 146, 48);
+    border: 5px solid rgb(0, 0, 0);
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 80px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    width: 80px;
+}
+.cell-128 {
+    background: rgb(52, 94, 146);
+    border: 5px solid rgb(0, 0, 0);
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 80px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    width: 80px;
+}
+.cell-256 {
+    background: rgb(146, 44, 134);
+    border: 5px solid rgb(0, 0, 0);
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 80px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    width: 80px;
+}
+.cell-512 {
+    background: rgb(127, 18, 146);
+    border: 5px solid rgb(0, 0, 0);
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 80px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    width: 80px;
+}
+.cell-1024 {
+    background: rgb(242, 255, 6);
+    border: 5px solid rgb(0, 0, 0);
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 80px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    width: 80px;
+}
+.cell-2048 {
+    background: rgb(255, 254, 254);
+    border: 5px solid rgb(0, 0, 0);
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 80px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    width: 80px;
+}

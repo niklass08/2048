@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Game as GameLogic} from './classes/game.js';
 import './index.css';
 
 function Cell(props) {
     return (
-        <div className="cell">
+        <div className={"cell-" + props.value}>
             <p className="cellValue">
                 {props.value}
             </p>
@@ -13,26 +14,29 @@ function Cell(props) {
 }
 
 class Grid extends React.Component {
-    renderCell(i) {
+    renderCell(i,j) {
         return (
             <Cell
-                value={this.props.grid[i]}
+                value={this.props.grid[i][j]}
             />
         )
     }
 
     render() {
-        const len = this.props.grid.length;
+        const lines = this.props.lines;
         const width = this.props.width;
         const rows = [];
-        for (let i = 0; i < len; i += width){
+        let row;
+        for (let i = 0; i < lines; i++){
+            row = [];
+            for(let j = 0; j<width;j++){
+                row.push(this.renderCell(i, j));
+            }
             rows.push(
-                <div className = "row">
-                    {this.renderCell(i)}
-                    {this.renderCell(i + 1)}
-                    {this.renderCell(i + 2)}
+                <div className="row">
+                    {row.slice()}
                 </div>
-            )
+            );
         }
         return (
             <div>
@@ -45,11 +49,14 @@ class Grid extends React.Component {
 class Game extends React.Component {
     constructor(props) {
         super(props);
+        this.gameLogic = new GameLogic(props.width, props.lines);
+        this.gameLogic.init();
         this.state = {
             lines: props.lines,
             width: props.width,
-            grid : Array(props.lines * props.width).fill(0)
-        }
+            grid : this.gameLogic.grid,
+        };
+
         this.handleKeyDown = this.handleKeyDown.bind(this);
     }
 
@@ -58,19 +65,39 @@ class Game extends React.Component {
     }
 
     handleKeyDown(event) {
-        console.log(event.keyCode);
-        const newGrid = this.state.grid.map(el => el + 1);
-        this.setState({ grid: newGrid });
+        switch (event.code) {
+            case "ArrowUp":
+                this.gameLogic.move("MOVE_UP");
+                break;
+            case "ArrowDown":
+                this.gameLogic.move("MOVE_DOWN");
+                break;
+            case "ArrowRight":
+                this.gameLogic.move("MOVE_RIGHT");
+                break;
+            case "ArrowLeft":
+                this.gameLogic.move("MOVE_LEFT");
+                break;
+            case "KeyR":
+                this.gameLogic.restart();
+                break;
+            default:
+                break;
+        }
+        this.setState({grid: this.gameLogic.grid})
+        console.log(this.gameLogic.score());
     }
 
     render() {
         return (
-            <span className="game">
+            <div className="game">
                 <Grid
                     grid={this.state.grid}
-                    width={3}
+                    width={this.state.width}
+                    lines={this.state.lines}
                 />
-            </span>
+                <div className = "score"> Score : {this.gameLogic.score()}</div>
+            </div>
         )
     }
 }
@@ -78,8 +105,8 @@ class Game extends React.Component {
 
 ReactDOM.render(
     <Game
-        lines={3}
-        width={3}
+        lines={4}
+        width={4}
     />,
     document.getElementById('root')
 );
