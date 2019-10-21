@@ -1,0 +1,18 @@
+.row {
+    display: table;
+}
+
+.cell {
+    background: rgb(146, 145, 145);
+    border: 5px solid rgb(0, 0, 0);
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 80px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    width: 80px;
+  }
