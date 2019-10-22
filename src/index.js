@@ -1,7 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Game as GameLogic} from './classes/game.js';
+import { createStore } from 'redux';
+import { Game as GameManager} from './classes/game.js';
 import './index.css';
+import reducer from './reducers.js';
+import { RandomAgent } from './classes/agents/randomAgent.js';
+
+const store = createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 function Cell(props) {
     return (
@@ -49,54 +54,58 @@ class Grid extends React.Component {
 class Game extends React.Component {
     constructor(props) {
         super(props);
-        this.gameLogic = new GameLogic(props.width, props.lines);
-        this.gameLogic.init();
+        this.gameManager = new GameManager(props.width, props.lines, store);
+        this.gameManager.init();
+        store.dispatch({ type: "NEW_GRID", grid: this.gameManager.grid });
         this.state = {
             lines: props.lines,
-            width: props.width,
-            grid : this.gameLogic.grid,
+            width: props.width
         };
-
-        this.handleKeyDown = this.handleKeyDown.bind(this);
     }
 
     componentDidMount() {
         window.addEventListener('keydown', this.handleKeyDown);
     }
 
-    handleKeyDown(event) {
+    handleKeyDown = (event) => {
         switch (event.code) {
             case "ArrowUp":
-                this.gameLogic.move("MOVE_UP");
+                this.gameManager.move("MOVE_UP");
                 break;
             case "ArrowDown":
-                this.gameLogic.move("MOVE_DOWN");
+                this.gameManager.move("MOVE_DOWN");
                 break;
             case "ArrowRight":
-                this.gameLogic.move("MOVE_RIGHT");
+                this.gameManager.move("MOVE_RIGHT");
                 break;
             case "ArrowLeft":
-                this.gameLogic.move("MOVE_LEFT");
+                this.gameManager.move("MOVE_LEFT");
                 break;
             case "KeyR":
-                this.gameLogic.restart();
+                this.gameManager.restart();
                 break;
             default:
                 break;
         }
-        this.setState({grid: this.gameLogic.grid})
-        console.log(this.gameLogic.score());
+        this.setState({ grid: this.gameManager.grid })
+        console.log(this.gameManager.score());
+    }
+
+    launchRandomAgent = () => {
+        let randomAgent = new RandomAgent(this.gameManager);
+        randomAgent.play();
     }
 
     render() {
         return (
             <div className="game">
                 <Grid
-                    grid={this.state.grid}
+                    grid={store.getState().grid}
                     width={this.state.width}
                     lines={this.state.lines}
                 />
-                <div className = "score"> Score : {this.gameLogic.score()}</div>
+                <div className="score"> Score : {this.gameManager.score()}</div>
+                <button onClick={this.launchRandomAgent}>RandomAgent</button>
             </div>
         )
     }

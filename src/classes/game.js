@@ -5,11 +5,12 @@ const MOVE_RIGHT = "MOVE_RIGHT";
 
 export class Game{
 
-  constructor(width, height){
+  constructor(width, height, store = null){
     this.width = width;
     this.height = height;
     this.grid = Array(width).fill(0).map(el => Array(height).fill(null));
     this.initValues = [2, 4];
+    this.store = store;
   }
 
   print(){
@@ -21,6 +22,7 @@ export class Game{
     this.grid[c1.x][c1.y] = this.initValues[getRandomInt(2)];
     const c2 = this.getFreeCell();
     this.grid[c2.x][c2.y] = this.initValues[getRandomInt(2)];
+    this.store.dispatch({ type: "NEW_GRID", grid: this.grid });
   }
 
   isFree(coordinate){
@@ -223,6 +225,10 @@ export class Game{
     }
     if(moved){
       this.newRandomCell();
+      if (this.store !== null) {
+        this.store.dispatch({ type: "NEW_GRID", grid: this.grid });
+        console.log("moved");
+      }
     }
   }
 
@@ -234,6 +240,7 @@ export class Game{
   restart(){
     this.grid = Array(this.width).fill(0).map(el => Array(this.height).fill(null));
     this.init();
+    this.store.dispatch({ type: "NEW_GRID", grid: this.grid });
   }
 
   score(){
@@ -244,6 +251,18 @@ export class Game{
      });
    });
    return score;
+  }
+
+  //notComplete
+  isOver() {
+    this.grid.forEach(el => {
+      el.forEach(cell =>{
+        if (cell === null) {
+          return false;
+        }
+      });
+    });
+    return true;
   }
 }
 
