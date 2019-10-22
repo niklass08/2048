@@ -230,6 +230,7 @@ export class Game{
         console.log("moved");
       }
     }
+    console.log("Game is over" + this.isOver().toString());
   }
 
   newRandomCell() {
@@ -255,14 +256,39 @@ export class Game{
 
   //notComplete
   isOver() {
-    this.grid.forEach(el => {
-      el.forEach(cell =>{
-        if (cell === null) {
-          return false;
-        }
-      });
-    });
-    return true;
+    let isOver = true;
+    for (let i = 0; i < this.width; i++){
+      for (let j = 0; j < this.height; j++){
+        isOver = isOver && this.checkNeighbors(i, j)
+      }
+    }
+    return isOver;
+  }
+
+
+  checkNeighbors(i, j) {
+    const cell = this.grid[i][j];
+    let neighbors = [];
+    if(i !==0){
+      //i - 1
+      neighbors.push(cell === this.grid[i-1][j] || this.grid[i-1][j] === null);
+    }
+    if(i !== this.width - 1){
+      //i+1
+      neighbors.push(cell === this.grid[i+1][j] || this.grid[i+1][j] === null);
+    }
+    if(j !==0){
+      //j - 1
+      neighbors.push(cell === this.grid[i][j-1] || this.grid[i][j-1] === null);
+    }
+    if(j !== this.height - 1){
+      //j+1
+      neighbors.push(cell === this.grid[i][j+1] || this.grid[i][j+1] === null);
+    }
+    return neighbors.reduce((acc, cur) => {
+      acc = acc && !cur;
+      return acc;
+    },true);
   }
 }
 
