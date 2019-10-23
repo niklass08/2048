@@ -89,11 +89,13 @@ class Game extends React.Component {
     }
 
     async launchRandomAgent() {
+        store.dispatch({type: "NEW_GRID"});
         let randomAgent = new RandomAgent(store);
         await randomAgent.play();
     }
 
     async launchOneMoveAgent() {
+        store.dispatch({type: "NEW_GRID"});
         let oneMoveAgent = new OneMoveAgent(store);
         await oneMoveAgent.play();
     }

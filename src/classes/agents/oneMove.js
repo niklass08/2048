@@ -22,14 +22,26 @@ export class OneMoveAgent {
                 nextStates.push(gameManager.score(gameManager.move(dir, base)));
             });
             console.log(nextStates);
-            let i = nextStates.indexOf(Math.max(...nextStates));
+            let i = getMaxInd(nextStates);
             let nextMove = DIRECTIONS[i];
             this.store.dispatch({type:nextMove});
             console.log("One move Agent");
-            await sleep(1000);
+            await sleep(20);
         }
     }
 }
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function getMaxInd(arr){
+    let ind = 0;
+    let max = 0;
+    for(let i = 0; i<arr.length;i++){
+        if(arr[i] > max){
+            max = arr[i];
+            ind = i;
+        }
+    }
+    return ind;
 }
