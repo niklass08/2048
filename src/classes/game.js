@@ -18,33 +18,38 @@ export class Game{
   }
 
   init(){
-    const c1 = this.getFreeCell();
-    this.grid[c1.x][c1.y] = this.initValues[getRandomInt(2)];
-    const c2 = this.getFreeCell();
-    this.grid[c2.x][c2.y] = this.initValues[getRandomInt(2)];
-    this.store.dispatch({ type: "NEW_GRID", grid: this.grid });
+    let grid = Array(this.width).fill(0).map(el => Array(this.height).fill(null));
+    const c1 = this.getFreeCell(grid);
+    grid[c1.x][c1.y] = this.initValues[getRandomInt(2)];
+    const c2 = this.getFreeCell(grid);
+    grid[c2.x][c2.y] = this.initValues[getRandomInt(2)];
+    //this.store.dispatch({ type: "NEW_GRID", grid: this.grid });
+    return grid;
   }
 
-  isFree(coordinate){
+  isFree(grid, coordinate){
     if(coordinate.x === undefined) return false;
-    return this.grid[coordinate.x][coordinate.y] === null ? true : false
+    return grid[coordinate.x][coordinate.y] === null ? true : false
   }
 
-  getFreeCell(){
+  getFreeCell(grid){
     const c = {};
-    while(!this.isFree(c)){
+    while(!this.isFree(grid, c)){
       c.x = getRandomInt(this.width);
       c.y = getRandomInt(this.height);
     }
     return c;
   }
 
-  moveUp(){
+  moveUp(grid){
     let moved = false;
-    this.transpose();
-    const newGrid = this.cloneGrid();
+    console.log(grid);
+    let transposed = this.transpose(grid);
+    console.log(transposed);
+    let newGrid = this.cloneGrid(transposed);
+    console.log(newGrid);
 
-    this.grid = newGrid.map(col => {
+    newGrid = newGrid.map(col => {
       const newCol = col.slice();
       //start at one because first cell cannot move further up
       for(let i = 1; i<col.length; i++){
@@ -74,14 +79,15 @@ export class Game{
       }
       return newCol;
     });
-    this.transpose();
-    return moved;
+    newGrid = this.transpose(newGrid);
+    console.log(newGrid);
+    return {moved: moved, newGrid: newGrid};
   }
 
-  moveLeft(){
+  moveLeft(grid){
     let moved = false;
-    const newGrid = this.cloneGrid();
-    this.grid = newGrid.map(row => {
+    let newGrid = this.cloneGrid(grid);
+    newGrid = newGrid.map(row => {
       const newRow = row.slice();
       //start at one because first cell cannot move further up
       for(let i = 1; i<row.length; i++){
@@ -111,15 +117,15 @@ export class Game{
       }
       return newRow;
     });
-    return moved;
+    return {moved: moved, newGrid: newGrid};
   }
 
-  moveDown(){
+  moveDown(grid){
     let moved = false;
-    this.transpose();
-    const newGrid = this.cloneGrid();
+    let transposed = this.transpose(grid);
+    let newGrid = this.cloneGrid(transposed);
 
-    this.grid = newGrid.map(col => {
+    newGrid = newGrid.map(col => {
       const newCol = col.slice().reverse();
       //start at one because first cell cannot move further up
       for(let i = 1; i<col.length; i++){
@@ -149,14 +155,14 @@ export class Game{
       }
       return newCol.reverse();
     });
-    this.transpose();
-    return moved;
+    newGrid = this.transpose(newGrid);
+    return {moved: moved, newGrid: newGrid};
   }
 
-  moveRight(){
+  moveRight(grid){
     let moved = false;
-    const newGrid = this.cloneGrid();
-    this.grid = newGrid.map(row => {
+    let newGrid = this.cloneGrid(grid);
+    newGrid = newGrid.map(row => {
       const newRow = row.slice().reverse();
       //start at one because first cell cannot move further up
       for(let i = 1; i<row.length; i++){
@@ -186,67 +192,65 @@ export class Game{
       }
       return newRow.reverse();
     });
-    return moved;
+    return {moved: moved, newGrid: newGrid};
   }
 
-  cloneGrid(){
-    return this.grid.slice().map(el => el.slice());
+  cloneGrid(grid){
+    return grid.slice().map(el => el.slice());
   }
 
   //Might break due to confusion between width and height
-  transpose() {
+  transpose(grid) {
     const newGrid = Array(this.height).fill(0).map(el => Array(this.width).fill(null));
-    for(let i = 0; i<this.grid.length; i++){
+    for(let i = 0; i<grid.length; i++){
       for(let j = 0; j<this.width; j++){
-        newGrid[i][j] = this.grid[j][i];
+        newGrid[i][j] = grid[j][i];
       }
     }
-    this.grid = newGrid;
+    return newGrid;
   }
 
-  move(direction){
-    let moved;
+  move(direction, grid){
+    let moveGrid;
     switch (direction) {
       case MOVE_UP:
-        moved = this.moveUp();
+        moveGrid = this.moveUp(grid);
         break;
       case MOVE_LEFT:
-        moved = this.moveLeft();
+        moveGrid = this.moveLeft(grid);
         break;
       case MOVE_DOWN:
-        moved = this.moveDown();
+        moveGrid = this.moveDown(grid);
         break;
-        case MOVE_RIGHT:
-          moved = this.moveRight();
+      case MOVE_RIGHT:
+          moveGrid = this.moveRight(grid);
           break;
       default:
-        moved = false;
+        moveGrid = {moved:false, newGrid: grid};
         break;
     }
-    if(moved){
-      this.newRandomCell();
-      if (this.store !== null) {
-        this.store.dispatch({ type: "NEW_GRID", grid: this.grid });
-        console.log("moved");
-      }
+    if(moveGrid.moved){
+      moveGrid.newGrid = this.newRandomCell(moveGrid.newGrid);
+      console.log("moved");
     }
-    console.log("Game is over" + this.isOver().toString());
+    console.log("Game is over" + this.isOver(moveGrid.newGrid).toString());
+    return moveGrid.newGrid;
   }
 
-  newRandomCell() {
-    const cell = this.getFreeCell();
-    this.grid[cell.x][cell.y] = this.initValues[getRandomInt(2)];
+  newRandomCell(grid) {
+    const cell = this.getFreeCell(grid);
+    let newGrid = this.cloneGrid(grid)
+    newGrid[cell.x][cell.y] = this.initValues[getRandomInt(2)];
+    return newGrid;
   }
 
-  restart(){
-    this.grid = Array(this.width).fill(0).map(el => Array(this.height).fill(null));
-    this.init();
-    this.store.dispatch({ type: "NEW_GRID", grid: this.grid });
+  restart(grid){
+    let newGrid = this.init();
   }
 
-  score(){
+  score(grid){
    let score = 0;
-   this.grid.forEach(el => {
+   grid.forEach(el => {
      el.forEach(cell =>{
        score += cell;
      });
@@ -255,35 +259,35 @@ export class Game{
   }
 
   //notComplete
-  isOver() {
+  isOver(grid) {
     let isOver = true;
     for (let i = 0; i < this.width; i++){
       for (let j = 0; j < this.height; j++){
-        isOver = isOver && this.checkNeighbors(i, j)
+        isOver = isOver && this.checkNeighbors(grid, i, j)
       }
     }
     return isOver;
   }
 
 
-  checkNeighbors(i, j) {
-    const cell = this.grid[i][j];
+  checkNeighbors(grid, i, j) {
+    const cell = grid[i][j];
     let neighbors = [];
     if(i !==0){
       //i - 1
-      neighbors.push(cell === this.grid[i-1][j] || this.grid[i-1][j] === null);
+      neighbors.push(cell === grid[i-1][j] || grid[i-1][j] === null);
     }
     if(i !== this.width - 1){
       //i+1
-      neighbors.push(cell === this.grid[i+1][j] || this.grid[i+1][j] === null);
+      neighbors.push(cell === grid[i+1][j] || grid[i+1][j] === null);
     }
     if(j !==0){
       //j - 1
-      neighbors.push(cell === this.grid[i][j-1] || this.grid[i][j-1] === null);
+      neighbors.push(cell === grid[i][j-1] || grid[i][j-1] === null);
     }
     if(j !== this.height - 1){
       //j+1
-      neighbors.push(cell === this.grid[i][j+1] || this.grid[i][j+1] === null);
+      neighbors.push(cell === grid[i][j+1] || grid[i][j+1] === null);
     }
     return neighbors.reduce((acc, cur) => {
       acc = acc && !cur;

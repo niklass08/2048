@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
-import { Game as GameManager} from './classes/game.js';
 import './index.css';
 import reducer from './reducers.js';
 import { RandomAgent } from './classes/agents/randomAgent.js';
+import {OneMoveAgent} from './classes/agents/oneMove.js';
 
 const store = createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
@@ -54,9 +54,7 @@ class Grid extends React.Component {
 class Game extends React.Component {
     constructor(props) {
         super(props);
-        this.gameManager = new GameManager(props.width, props.lines, store);
-        this.gameManager.init();
-        store.dispatch({ type: "NEW_GRID", grid: this.gameManager.grid });
+        store.dispatch({ type: "NEW_GRID"});
         this.state = {
             lines: props.lines,
             width: props.width
@@ -68,32 +66,36 @@ class Game extends React.Component {
     }
 
     handleKeyDown = (event) => {
+        const grid = store.getState().grid;
         switch (event.code) {
             case "ArrowUp":
-                this.gameManager.move("MOVE_UP");
+                store.dispatch({type: "MOVE_UP"});
                 break;
             case "ArrowDown":
-                this.gameManager.move("MOVE_DOWN");
+                store.dispatch({type: "MOVE_DOWN"});
                 break;
             case "ArrowRight":
-                this.gameManager.move("MOVE_RIGHT");
+                store.dispatch({type: "MOVE_RIGHT"});
                 break;
             case "ArrowLeft":
-                this.gameManager.move("MOVE_LEFT");
+                store.dispatch({type: "MOVE_LEFT"});
                 break;
             case "KeyR":
-                this.gameManager.restart();
+                store.dispatch({type: "NEW_GRID"});
                 break;
             default:
                 break;
         }
-        this.setState({ grid: this.gameManager.grid })
-        console.log(this.gameManager.score());
     }
 
-    launchRandomAgent = () => {
-        let randomAgent = new RandomAgent(this.gameManager);
-        randomAgent.play();
+    async launchRandomAgent() {
+        let randomAgent = new RandomAgent(store);
+        await randomAgent.play();
+    }
+
+    async launchOneMoveAgent() {
+        let oneMoveAgent = new OneMoveAgent(store);
+        await oneMoveAgent.play();
     }
 
     render() {
@@ -104,18 +106,22 @@ class Game extends React.Component {
                     width={this.state.width}
                     lines={this.state.lines}
                 />
-                <div className="score"> Score : {this.gameManager.score()}</div>
+                <div className="score"> Score : {store.getState().score}</div>
                 <button onClick={this.launchRandomAgent}>RandomAgent</button>
+                <button onClick={this.launchOneMoveAgent}>OneMoveAgent</button>
             </div>
         )
     }
 }
 
-
-ReactDOM.render(
-    <Game
-        lines={4}
-        width={4}
-    />,
-    document.getElementById('root')
-);
+function render(){
+    ReactDOM.render(
+        <Game
+            lines={4}
+            width={4}
+        />,
+        document.getElementById('root')
+    );
+}
+render();
+store.subscribe(render);

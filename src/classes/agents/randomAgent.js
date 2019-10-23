@@ -1,3 +1,5 @@
+import {Game as GameManager} from "../game.js"
+const gameManager = new GameManager(4, 4);
 const DIRECTIONS = [
     "MOVE_UP",
     "MOVE_DOWN",
@@ -6,24 +8,25 @@ const DIRECTIONS = [
 ]
 
 export class RandomAgent {
-    constructor(gameManager) {
-        this.gameManager = gameManager;
+    constructor(store) {
+        this.store = store;
         console.log("creating random agent");
     }
 
-    play() {
+    async play() {
         console.log("start playing");
-        this.gameManager.init();
-        console.log(this.gameManager.isOver());
-        while (!this.gameManager.isOver()) {
+        while (!gameManager.isOver(this.store.getState().grid)) {
             let nextMove = DIRECTIONS[getRandomInt(3)];
-            this.gameManager.move(nextMove);
+            this.store.dispatch({type:nextMove});
             console.log("RandomAgentPlayed");
-            console.log("RandomAgentScore:" + this.gameManager.score());
+            await sleep(30);
         }
     }
 }
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
+}
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
