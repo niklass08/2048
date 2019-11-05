@@ -16,10 +16,10 @@ export class RandomAgent {
     async play() {
         console.log("start playing");
         while (!gameManager.isOver(this.store.getState().grid)) {
-            let nextMove = DIRECTIONS[getRandomInt(3)];
+            let nextMove = DIRECTIONS[getRandomInt(4)];
             this.store.dispatch({type:nextMove});
             console.log("RandomAgentPlayed");
-            await sleep(30);
+            //await sleep(30);
         }
     }
 }

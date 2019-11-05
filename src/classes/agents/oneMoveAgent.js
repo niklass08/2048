@@ -26,7 +26,7 @@ export class OneMoveAgent {
             let nextMove = DIRECTIONS[i];
             this.store.dispatch({type:nextMove});
             console.log("One move Agent");
-            await sleep(20);
+            //await sleep(20);
         }
     }
 }

@@ -19,11 +19,8 @@ export class Game{
 
   init(){
     let grid = Array(this.width).fill(0).map(el => Array(this.height).fill(null));
-    const c1 = this.getFreeCell(grid);
-    grid[c1.x][c1.y] = this.initValues[getRandomInt(2)];
-    const c2 = this.getFreeCell(grid);
-    grid[c2.x][c2.y] = this.initValues[getRandomInt(2)];
-    //this.store.dispatch({ type: "NEW_GRID", grid: this.grid });
+    grid= this.newRandomCell(grid);
+    grid= this.newRandomCell(grid);
     return grid;
   }
 
@@ -43,11 +40,8 @@ export class Game{
 
   moveUp(grid){
     let moved = false;
-    console.log(grid);
     let transposed = this.transpose(grid);
-    console.log(transposed);
     let newGrid = this.cloneGrid(transposed);
-    console.log(newGrid);
 
     newGrid = newGrid.map(col => {
       const newCol = col.slice();
@@ -80,7 +74,6 @@ export class Game{
       return newCol;
     });
     newGrid = this.transpose(newGrid);
-    console.log(newGrid);
     return {moved: moved, newGrid: newGrid};
   }
 
@@ -231,16 +224,14 @@ export class Game{
     }
     if(moveGrid.moved){
       moveGrid.newGrid = this.newRandomCell(moveGrid.newGrid);
-      console.log("moved");
     }
-    console.log("Game is over" + this.isOver(moveGrid.newGrid).toString());
     return moveGrid.newGrid;
   }
 
   newRandomCell(grid) {
     const cell = this.getFreeCell(grid);
     let newGrid = this.cloneGrid(grid)
-    newGrid[cell.x][cell.y] = this.initValues[getRandomInt(2)];
+    newGrid[cell.x][cell.y] = Math.random() >= 0.9 ? 4 : 2;
     return newGrid;
   }
 
@@ -252,7 +243,7 @@ export class Game{
    let score = 0;
    grid.forEach(el => {
      el.forEach(cell =>{
-       score += cell;
+       score += cell * cell;
      });
    });
    return score;
@@ -268,7 +259,6 @@ export class Game{
     }
     return isOver;
   }
-
 
   checkNeighbors(grid, i, j) {
     const cell = grid[i][j];
@@ -293,6 +283,19 @@ export class Game{
       acc = acc && !cur;
       return acc;
     },true);
+  }
+
+  evaluateScore(grid, seq){
+    const newGrid = this.playSequence(grid, seq);
+    return this.score(newGrid);
+  }
+
+  playSequence(grid, seq) {
+    let clone = this.cloneGrid(grid);
+    seq.forEach(move => {
+      clone = this.move(move, grid);
+    })
+    return clone;
   }
 }
 

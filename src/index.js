@@ -4,7 +4,8 @@ import { createStore } from 'redux';
 import './index.css';
 import reducer from './reducers.js';
 import { RandomAgent } from './classes/agents/randomAgent.js';
-import {OneMoveAgent} from './classes/agents/oneMove.js';
+import {OneMoveAgent} from './classes/agents/oneMoveAgent.js';
+import {LookingForwardAgent} from './classes/agents/lookingForwardAgent.js';
 
 const store = createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
@@ -100,6 +101,17 @@ class Game extends React.Component {
         await oneMoveAgent.play();
     }
 
+    async launchLookingForwardAgent() {
+        store.dispatch({type: "NEW_GRID"});
+        let lookingForwardAgent = new LookingForwardAgent(store);
+        await lookingForwardAgent.play();
+    }
+
+    debugOneMoveAgent(){
+        let lookingForwardAgent = new LookingForwardAgent(store);
+        lookingForwardAgent.playOneMove();
+    }
+
     render() {
         return (
             <div className="game">
@@ -111,6 +123,8 @@ class Game extends React.Component {
                 <div className="score"> Score : {store.getState().score}</div>
                 <button onClick={this.launchRandomAgent}>RandomAgent</button>
                 <button onClick={this.launchOneMoveAgent}>OneMoveAgent</button>
+                <button onClick={this.launchLookingForwardAgent}>LookingForwardAgent</button>
+                <button onClick={this.debugOneMoveAgent}>debug</button>
             </div>
         )
     }
